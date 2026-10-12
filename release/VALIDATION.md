@@ -1,5 +1,25 @@
 # Implementation validation
 
+## Conflicting-summary follow-up
+
+Added a synthetic reproduction of the 2.16.0 evidence failure pattern: passing
+short-prompt execution and an all-passed summary alongside a separate longer-prompt
+regression. The fixture uses invented provenance and illustrative values, not
+private source files or a real Gemma checkpoint run. Tests require the CLI to exit 1
+and identify both source files and the failing case; correcting the finding and
+measurement produces exit 0. Additional cases cover missing/omitted sources,
+stale metadata, negative or malformed summaries, duplicate execution evidence,
+and findings that cannot substitute for required execution.
+
+Validation: all 30 gate tests passed, including the two end-to-end CLI outcomes;
+type checking passed for all three script source files. Formatting completed with
+the previously documented tooling warnings, and the diff whitespace check passed.
+
+This does not establish that the post-release regression was knowable before the
+original release. It prevents available contradictory evidence from being masked
+by a summary. Full repository/model validation remains incomplete under the
+previously authorized review-only branch exception.
+
 ## Numerical CLI follow-up
 
 The CLI now applies policy-owned numerical limits to recorded pytest properties,

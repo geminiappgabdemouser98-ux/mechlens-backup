@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "run_id": "17",
+  "run_attempt": "2",
+  "suite": "acceptance",
+  "dirty_worktree": false,
+  "exit_code": 0,
+  "deselected": [],
+  "collection_problems": [],
+  "cases": [
+    {
+      "nodeid": "synthetic::short_prompt",
+      "properties": [
+        [
+          "max_absolute_logit_delta",
+          5e-05
+        ]
+      ],
+      "phases": [
+        {
+          "when": "setup",
+          "outcome": "passed",
+          "xfail": null
+        },
+        {
+          "when": "call",
+          "outcome": "passed",
+          "xfail": null
+        },
+        {
+          "when": "teardown",
+          "outcome": "passed",
+          "xfail": null
+        }
+      ]
+    }
+  ]
+}

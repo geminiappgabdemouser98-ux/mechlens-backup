@@ -3,6 +3,7 @@
 import copy
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -266,6 +267,141 @@ class GateTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 1)
         self.assertFalse(load_json(self.folder / "report/readiness.json")["ready"])
+
+
+class SummaryConflictTests(unittest.TestCase):
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.folder = Path(self.temporary.name) / "evidence"
+        shutil.copytree(ROOT / "tests/unit/release_readiness/fixtures/v2_16_0_pattern", self.folder)
+
+    def assess(self):
+        return assess(POLICY, self.folder, COMMIT, "17", "2", "success")
+
+    def update(self, filename, **changes):
+        path = self.folder / filename
+        value = load_json(path)
+        value.update(changes)
+        path.write_text(json.dumps(value))
+
+    def fix_regression(self):
+        self.update(
+            "long-prompt.json",
+            cases=[
+                {
+                    "nodeid": "synthetic::long_prompt",
+                    "regression": False,
+                    "properties": [["max_absolute_logit_delta", 2e-5]],
+                }
+            ],
+        )
+
+    def test_v2_16_0_pattern_exposes_both_sources_and_failing_case(self):
+        report = self.assess()
+        self.assertFalse(report["ready"])
+        conflict = report["contradictions"][0]
+        self.assertEqual(conflict["summary_file"], "summary.json")
+        self.assertEqual(conflict["conflicting_files"], ["long-prompt.json"])
+        self.assertTrue(
+            next(s for s in report["suites"] if s["file"] == "short-prompt.json")["ready"]
+        )
+        self.assertTrue(any("synthetic::long_prompt" in reason for reason in conflict["reasons"]))
+        self.assertFalse(
+            any("unknown" in reason or "duplicate" in reason for reason in report["blockers"])
+        )
+        self.assertIn("summary.json", markdown(report))
+        self.assertIn("long-prompt.json", markdown(report))
+        self.assertIn("0.0002", markdown(report))
+
+    def test_consistent_passing_sources_allow_summary(self):
+        self.fix_regression()
+        report = self.assess()
+        self.assertTrue(report["ready"], report["blockers"])
+        self.assertEqual(report["contradictions"], [])
+
+    def test_regression_flag_blocks_even_with_passing_number(self):
+        self.fix_regression()
+        value = load_json(self.folder / "long-prompt.json")
+        value["cases"][0]["regression"] = True
+        self.update("long-prompt.json", cases=value["cases"])
+        self.assertTrue(any("reported regression" in r for r in self.assess()["blockers"]))
+
+    def test_false_regression_flag_cannot_clear_failing_number(self):
+        value = load_json(self.folder / "long-prompt.json")
+        value["cases"][0]["regression"] = False
+        self.update("long-prompt.json", cases=value["cases"])
+        self.assertFalse(self.assess()["ready"])
+
+    def test_missing_or_omitted_source_blocks(self):
+        self.update("summary.json", sources=["short-prompt.json"])
+        self.assertTrue(any("omitted evidence" in r for r in self.assess()["blockers"]))
+        self.update("summary.json", sources=["short-prompt.json", "long-prompt.json"])
+        (self.folder / "long-prompt.json").unlink()
+        self.assertTrue(any("missing referenced evidence" in r for r in self.assess()["blockers"]))
+
+    def test_summary_and_supplement_cannot_replace_execution(self):
+        self.fix_regression()
+        (self.folder / "short-prompt.json").unlink()
+        self.assertIn("acceptance: missing evidence", self.assess()["blockers"])
+
+    def test_stale_malformed_or_negative_summary_blocks(self):
+        self.fix_regression()
+        for changes in (
+            {"commit": "b" * 40},
+            {"all_passed": "true"},
+            {"all_passed": False},
+            {"sources": []},
+            {"sources": [{}]},
+            {"sources": ["short-prompt.json"] * 2},
+        ):
+            original = (self.folder / "summary.json").read_text()
+            self.update("summary.json", **changes)
+            self.assertFalse(self.assess()["ready"])
+            (self.folder / "summary.json").write_text(original)
+        self.update("long-prompt.json", run_attempt="1")
+        self.assertFalse(self.assess()["ready"])
+
+    def test_duplicate_execution_still_reports_its_numerical_regression(self):
+        bad = load_json(self.folder / "short-prompt.json")
+        bad["cases"][0]["properties"] = [["max_absolute_logit_delta", 0.01]]
+        (self.folder / "zzz-duplicate.json").write_text(json.dumps(bad))
+        report = self.assess()
+        self.assertTrue(any("duplicate execution" in r for r in report["blockers"]))
+        self.assertTrue(any("zzz-duplicate.json" in r and "0.01" in r for r in report["blockers"]))
+
+    def test_cli_blocks_conflict_then_accepts_consistent_evidence(self):
+        policy = self.folder.parent / "policy.json"
+        policy.write_text(json.dumps(POLICY))
+        output = self.folder.parent / "report"
+        for expected_exit in (1, 0):
+            if expected_exit == 0:
+                self.fix_regression()
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(ROOT / "scripts/release_readiness.py"),
+                    "--policy",
+                    str(policy),
+                    "--evidence-dir",
+                    str(self.folder),
+                    "--commit",
+                    COMMIT,
+                    "--run-id",
+                    "17",
+                    "--run-attempt",
+                    "2",
+                    "--checks-result",
+                    "success",
+                    "--output-dir",
+                    str(output),
+                ],
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(result.returncode, expected_exit, result.stderr)
+            report = load_json(output / "readiness.json")
+            self.assertEqual(bool(report["contradictions"]), expected_exit == 1)
 
 
 class RecorderTests(unittest.TestCase):

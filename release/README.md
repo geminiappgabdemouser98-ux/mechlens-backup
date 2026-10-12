@@ -45,6 +45,39 @@ acceptance tests that do not emit this property need instrumentation before this
 can pass. This change does not invent Gemma checkpoint evidence. Both decision reports
 include the observed values, policy maxima and test IDs for maintainer review.
 
+### Summary-versus-detail conflicts
+
+All JSON files under `--evidence-dir` are inspected, including nested directories.
+An optional `kind: "release-summary"` record contains `schema_version: 1`, the same
+`commit`, `run_id`, `run_attempt`, a boolean `all_passed`, and a non-empty `sources`
+list of paths relative to the evidence directory. That list must cover every
+non-summary JSON file in the directory. Missing referenced files and omitted files
+block; there may be at most one summary. A summary never satisfies a required suite.
+
+Additional `kind: "regression-evidence"` records use the same provenance fields,
+a required suite name, and `cases`. Each case has a non-empty `nodeid`, a boolean
+`regression`, and numerical `properties` in the existing `[name, value]` format.
+They do not need invented pytest phases and cannot replace execution evidence.
+A true regression flag blocks even if its numbers pass; a false flag cannot clear
+an above-limit number. Every file is evaluated independently, including duplicate
+execution files, so a newer-looking or alphabetically earlier passing file cannot
+hide a failing one. Only a new, correctly scoped candidate evidence set can clear
+an old failure; summary claims and issue closure labels cannot do so.
+
+If `all_passed` is true while any evidence is failing, incomplete or stale, the CLI
+returns 1 and writes a `contradictions` section naming the summary, conflicting
+files, and reasons. Source paths and hashes are retained for review. The fixture
+directory `tests/unit/release_readiness/fixtures/v2_16_0_pattern/` shows the formats:
+a green short-prompt execution and summary coexist with a longer-prompt regression.
+It is explicitly synthetic, not a historical model replay or exported incident data.
+
+This is structured evidence reconciliation, not prose interpretation: slides,
+triage notes and issue discussions must be represented as reviewed JSON findings
+and included in the evidence bundle. The CLI cannot discover an omitted source
+that neither the bundle nor its manifest mentions, or detect a regression before
+any test or review finds it. Keep findings scoped to the exact candidate/run;
+do not mix a later hotfix's results into evidence for the earlier release.
+
 The opt-in `scripts.release_evidence` pytest plugin records node IDs, all test phases,
 omissions, pytest exit code, test properties, Python/platform/dependency versions and command
 arguments. JSON is written atomically at session completion; a crash or unavailable suite

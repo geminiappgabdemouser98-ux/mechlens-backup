@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "run_id": "17",
+  "run_attempt": "2",
+  "kind": "regression-evidence",
+  "suite": "acceptance",
+  "cases": [
+    {
+      "nodeid": "synthetic::long_prompt",
+      "regression": true,
+      "properties": [
+        [
+          "max_absolute_logit_delta",
+          0.0002
+        ]
+      ]
+    }
+  ]
+}

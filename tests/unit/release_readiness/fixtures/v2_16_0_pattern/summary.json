@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "run_id": "17",
+  "run_attempt": "2",
+  "kind": "release-summary",
+  "all_passed": true,
+  "sources": [
+    "short-prompt.json",
+    "long-prompt.json"
+  ]
+}
