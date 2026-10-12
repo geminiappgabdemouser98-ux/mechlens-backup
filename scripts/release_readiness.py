@@ -1,4 +1,4 @@
-"""Fail closed on incomplete release execution evidence; emit JSON and Markdown reports."""
+"""Fail closed on incomplete evidence or broken numerical limits; emit JSON and Markdown."""
 
 import argparse
 import hashlib
@@ -66,6 +66,63 @@ def validate_evidence(evidence: Any, commit: str, run_id: str, run_attempt: str)
     return problems
 
 
+def finite_nonnegative(value: Any) -> bool:
+    try:
+        return type(value) in (int, float) and math.isfinite(value) and value >= 0
+    except OverflowError:
+        return False
+
+
+def check_thresholds(evidence: Dict[str, Any], limits: Dict[str, Any]) -> Dict[str, Any]:
+    """Check every recorded measurement against policy, never an evidence-supplied tolerance."""
+    problems: List[str] = []
+    measurements: List[Dict[str, Any]] = []
+    seen = set()
+    cases = evidence.get("cases", [])
+    if not isinstance(cases, list):
+        cases = []
+    for case in cases:
+        if not isinstance(case, dict):
+            continue
+        properties = case.get("properties", [])
+        if not isinstance(properties, list):
+            problems.append(f"{case.get('nodeid')}: malformed metric properties")
+            continue
+        case_metrics = set()
+        for prop in properties:
+            if (
+                not isinstance(prop, (list, tuple))
+                or len(prop) != 2
+                or not isinstance(prop[0], str)
+            ):
+                problems.append(f"{case.get('nodeid')}: malformed metric property")
+                continue
+            name, value = prop
+            if name not in limits:
+                continue
+            seen.add(name)
+            if name in case_metrics:
+                problems.append(f"{case.get('nodeid')}: duplicate metric {name}")
+            case_metrics.add(name)
+            limit = limits[name]
+            passed = finite_nonnegative(value) and value <= limit
+            measurements.append(
+                {
+                    "nodeid": case.get("nodeid"),
+                    "metric": name,
+                    "value": value,
+                    "maximum": limit,
+                    "passed": passed,
+                }
+            )
+            if not passed:
+                problems.append(
+                    f"{case.get('nodeid')}: {name}={value!r}; required finite 0 <= value <= {limit}"
+                )
+    problems.extend(f"missing required metric: {name}" for name in limits if name not in seen)
+    return {"blockers": problems, "measurements": measurements}
+
+
 def assess(
     policy: Any, evidence_dir: Path, commit: str, run_id: str, run_attempt: str, checks_result: str
 ) -> Dict[str, Any]:
@@ -85,6 +142,26 @@ def assess(
         or len(set(expected)) != len(expected)
     ):
         return {"ready": False, "blockers": ["invalid or empty release policy"], "suites": []}
+    thresholds = policy.get("thresholds")
+    if (
+        not isinstance(thresholds, dict)
+        or not thresholds
+        or any(suite not in expected for suite in thresholds)
+        or any(
+            not isinstance(limits, dict)
+            or not limits
+            or any(
+                not isinstance(name, str) or not name or not finite_nonnegative(limit)
+                for name, limit in limits.items()
+            )
+            for limits in thresholds.values()
+        )
+    ):
+        return {
+            "ready": False,
+            "blockers": ["invalid or missing numerical threshold policy"],
+            "suites": [],
+        }
     found: Dict[str, Any] = {}
     for path in sorted(evidence_dir.rglob("*.json")):
         try:
@@ -98,6 +175,8 @@ def assess(
                 continue
             found[suite] = evidence
             errors = validate_evidence(evidence, commit, run_id, run_attempt)
+            numerical = check_thresholds(evidence, thresholds.get(suite, {}))
+            errors.extend(numerical["blockers"])
             suites.append(
                 {
                     "suite": suite,
@@ -108,6 +187,7 @@ def assess(
                     if isinstance(evidence.get("cases"), list)
                     else 0,
                     "blockers": errors,
+                    "measurements": numerical["measurements"],
                 }
             )
             blockers.extend(f"{suite}: {error}" for error in errors)
@@ -132,7 +212,7 @@ def markdown(report: Dict[str, Any]) -> str:
         f"Candidate: `{report.get('commit', 'unknown')}`",
         f"Run: `{report.get('run_id', 'unknown')}` / attempt `{report.get('run_attempt', 'unknown')}`",
         "",
-        "This is an execution-completeness gate, not a model-correctness certification.",
+        "This checks execution completeness and recorded numerical thresholds, not all model correctness.",
         "Raw evidence records test IDs, outcomes, omissions, properties and dependency versions.",
         "",
         "| Suite | Cases | Result |",
@@ -144,6 +224,23 @@ def markdown(report: Dict[str, Any]) -> str:
             + ("PASS" if suite["ready"] else "BLOCKED")
             + " |"
         )
+    lines.extend(
+        [
+            "",
+            "## Numerical acceptance",
+            "",
+            "| Suite / case | Metric | Observed | Maximum | Result |",
+            "| --- | --- | ---: | ---: | --- |",
+        ]
+    )
+    for suite in report["suites"]:
+        for measurement in suite.get("measurements", []):
+            lines.append(
+                f"| {suite['suite']} / {measurement['nodeid']} | {measurement['metric']} | "
+                f"{measurement['value']} | {measurement['maximum']} | "
+                + ("PASS" if measurement["passed"] else "BLOCKED")
+                + " |"
+            )
     lines.extend(["", "## Blockers", ""])
     # Keep the Actions summary bounded; the JSON report preserves every blocker.
     for blocker in report["blockers"][:100]:

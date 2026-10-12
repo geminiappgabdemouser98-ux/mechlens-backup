@@ -19,5 +19,19 @@
     "notebook-T5",
     "notebook-LLaMA",
     "notebook-LLaMA_GPU_Quantized"
-  ]
+  ],
+  "thresholds": {
+    "acceptance-3.10": {
+      "max_absolute_logit_delta": 0.0001
+    },
+    "acceptance-3.11": {
+      "max_absolute_logit_delta": 0.0001
+    },
+    "acceptance-3.12": {
+      "max_absolute_logit_delta": 0.0001
+    },
+    "norm-regression": {
+      "max_absolute_activation_delta": 1e-06
+    }
+  }
 }

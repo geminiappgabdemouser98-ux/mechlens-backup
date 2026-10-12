@@ -9,11 +9,15 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.release_readiness import assess, load_json, markdown
+from scripts.release_readiness import assess, check_thresholds, load_json, markdown
 
 ROOT = Path(__file__).resolve().parents[3]
 COMMIT = "a" * 40
-POLICY = {"schema_version": 1, "required_suites": ["acceptance"]}
+POLICY = {
+    "schema_version": 1,
+    "required_suites": ["acceptance"],
+    "thresholds": {"acceptance": {"max_absolute_logit_delta": 1e-4}},
+}
 
 
 def evidence():
@@ -30,6 +34,7 @@ def evidence():
         "cases": [
             {
                 "nodeid": "test_model.py::test_parity",
+                "properties": [["max_absolute_logit_delta", 2.9e-5]],
                 "phases": [
                     {"when": when, "outcome": "passed", "xfail": None}
                     for when in ("setup", "call", "teardown")
@@ -55,6 +60,103 @@ class GateTests(unittest.TestCase):
         self.assertTrue(report["ready"])
         self.assertEqual(report["suites"][0]["case_count"], 1)
         self.assertIn("PASS", markdown(report))
+
+    def test_numerical_threshold_boundary_and_green_test_failure(self):
+        for delta, expected in (
+            (0, True),
+            (2.9e-5, True),
+            (1e-4, True),
+            (1.00001e-4, False),
+            (1.3e-4, False),
+        ):
+            with self.subTest(delta=delta):
+                value = evidence()
+                value["cases"][0]["properties"] = [
+                    ["max_absolute_logit_delta", delta],
+                    ["absolute_tolerance", 100],
+                ]
+                report = self.assess(value)
+                self.assertEqual(report["ready"], expected)
+                metric = report["suites"][0]["measurements"][0]
+                self.assertEqual(metric["maximum"], 1e-4)
+                self.assertEqual(metric["value"], delta)
+                self.assertIn(str(delta), markdown(report))
+
+    def test_missing_duplicate_invalid_and_nonfinite_metrics_block(self):
+        for properties in (
+            [],
+            None,
+            [["max_absolute_logit_delta", False]],
+            [["max_absolute_logit_delta", "0.00001"]],
+            [["max_absolute_logit_delta", -1]],
+            [["max_absolute_logit_delta", float("nan")]],
+            [["max_absolute_logit_delta", float("inf")]],
+            [["max_absolute_logit_delta", 10**400]],
+            [["max_absolute_logit_delta", 0], ["max_absolute_logit_delta", 0]],
+            [["max_absolute_logit_delta"]],
+        ):
+            with self.subTest(properties=properties):
+                value = evidence()
+                value["cases"][0]["properties"] = properties
+                self.assertFalse(self.assess(value)["ready"])
+
+    def test_one_bad_case_cannot_be_averaged_away(self):
+        value = evidence()
+        bad = copy.deepcopy(value["cases"][0])
+        bad["nodeid"] = "test_model.py::test_long_prompt"
+        bad["properties"] = [["max_absolute_logit_delta", 1.3e-4]]
+        value["cases"].append(bad)
+        report = self.assess(value)
+        self.assertFalse(report["ready"])
+        self.assertTrue(any("test_long_prompt" in reason for reason in report["blockers"]))
+
+    def test_invalid_or_missing_threshold_policy_blocks(self):
+        for thresholds in (
+            None,
+            {},
+            {"unknown": {"delta": 1e-4}},
+            {"acceptance": {}},
+            {"acceptance": {"delta": -1}},
+            {"acceptance": {"delta": True}},
+            {"acceptance": {"delta": float("inf")}},
+        ):
+            self.assertFalse(self.assess(evidence(), {**POLICY, "thresholds": thresholds})["ready"])
+
+    def test_cli_checks_threshold_and_writes_both_reports(self):
+        policy = self.folder / "policy.json"
+        policy.write_text(json.dumps(POLICY))
+        inputs = self.folder / "inputs"
+        inputs.mkdir()
+        for delta, exit_code in ((1e-4, 0), (1.3e-4, 1)):
+            value = evidence()
+            value["cases"][0]["properties"] = [["max_absolute_logit_delta", delta]]
+            (inputs / "acceptance.json").write_text(json.dumps(value))
+            output = self.folder / "report"
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(ROOT / "scripts/release_readiness.py"),
+                    "--policy",
+                    str(policy),
+                    "--evidence-dir",
+                    str(inputs),
+                    "--commit",
+                    COMMIT,
+                    "--run-id",
+                    "17",
+                    "--run-attempt",
+                    "2",
+                    "--checks-result",
+                    "success",
+                    "--output-dir",
+                    str(output),
+                ],
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(result.returncode, exit_code, result.stderr)
+            self.assertEqual(load_json(output / "readiness.json")["ready"], exit_code == 0)
+            self.assertIn(str(delta), (output / "readiness.md").read_text())
 
     def test_missing_empty_and_malformed_evidence_block(self):
         self.assertFalse(self.assess()["ready"])
@@ -167,6 +269,14 @@ class GateTests(unittest.TestCase):
 
 
 class RecorderTests(unittest.TestCase):
+    def test_archived_normalization_evidence_uses_recorded_properties(self):
+        recorded = load_json(ROOT / "release/validation/norm.json")
+        result = check_thresholds(recorded, {"max_absolute_activation_delta": 1e-6})
+        self.assertEqual(len(result["measurements"]), 8)
+        self.assertEqual(result["blockers"], [])
+        tighter = check_thresholds(recorded, {"max_absolute_activation_delta": 1e-10})
+        self.assertEqual(len(tighter["blockers"]), 4)
+
     def test_real_pytest_records_failures_skips_xfails_and_deselection(self):
         with tempfile.TemporaryDirectory() as temporary:
             folder = Path(temporary)

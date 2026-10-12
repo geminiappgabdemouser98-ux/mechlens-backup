@@ -1,5 +1,23 @@
 # Implementation validation
 
+## Numerical CLI follow-up
+
+The CLI now applies policy-owned numerical limits to recorded pytest properties,
+independently of a green pytest outcome. The follow-up gate tests exercise the exact
+`1e-4` boundary, above-threshold failures, missing/invalid/duplicate metrics, a bad
+case among passing cases, both CLI exit codes and reports, and the archived real
+normalization evidence. This extends the original validation below; it does not
+rerun or certify the full acceptance suite. The review-only push exception remains
+in effect and full repository checks remain incomplete.
+
+Follow-up validation: all 21 gate tests passed (`unittest discover`), including
+end-to-end CLI success at `1e-4` and exit 1 at `1.3e-4`. `uv run mypy scripts`
+(with its cache outside the repository) passed for all three source files.
+`make format` completed with the same tooling warnings recorded below;
+`git diff --check` passed. The model normalization implementation was unchanged.
+
+## Original implementation checks
+
 This is a local implementation review, not a release approval. No full candidate
 acceptance or trained Gemma-3 checkpoint run was completed.
 

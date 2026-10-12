@@ -23,6 +23,28 @@ An attempt rerun does not accept evidence from a previous attempt: rerun all req
 
 ## Evidence and review
 
+The release-readiness CLI is `uv run --no-project python scripts/release_readiness.py`.
+It reads the JSON evidence emitted by `scripts.release_evidence`; the complete invocation
+is below. It exits 1 if any recorded metric exceeds its policy maximum, even when all
+pytest phases passed. Equality passes. Missing required metrics, negative values,
+booleans, numeric strings, duplicate measurements within a case, NaN and infinity block.
+Evidence-provided tolerance properties cannot override the policy.
+
+`readiness-policy.json` requires `max_absolute_logit_delta <= 1e-4` in each Python
+acceptance suite, and `max_absolute_activation_delta <= 1e-6` in the normalization suite.
+Producers attach measurements using, for example:
+
+```python
+record_property("max_absolute_logit_delta", float((actual - reference).abs().max()))
+```
+
+Measure every numerical comparison separately after checking both tensors are finite.
+The CLI checks every recorded value and requires at least one measurement for each
+suite/metric rule; it cannot detect a comparison the producer never recorded. Existing
+acceptance tests that do not emit this property need instrumentation before this gate
+can pass. This change does not invent Gemma checkpoint evidence. Both decision reports
+include the observed values, policy maxima and test IDs for maintainer review.
+
 The opt-in `scripts.release_evidence` pytest plugin records node IDs, all test phases,
 omissions, pytest exit code, test properties, Python/platform/dependency versions and command
 arguments. JSON is written atomically at session completion; a crash or unavailable suite
@@ -34,7 +56,7 @@ attestations: protect workflow/policy changes and release permissions through hu
 The required notebook inventory is explicit and currently matches the 14 entries in
 `checks.yml`. Change both together after review; a unit test checks inventory drift.
 All checks in the reusable workflow must also succeed, including unit tests, formatting and
-type checking. Passing this gate establishes execution completeness within that selected scope,
+type checking. Passing this gate establishes execution completeness and recorded numerical compliance within that selected scope,
 not correctness of every supported architecture, input, precision or device.
 
 ## Numerical coverage and remaining release decisions
