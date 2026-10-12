@@ -16,6 +16,8 @@ on:
       - "*.md"
       - ".github/**"
       - "!.github/workflows/checks.yml"
+      - "!.github/workflows/release.yml"
+      - "!.github/workflows/release-readiness.yml"
   pull_request:
     branches:
       - main
@@ -28,6 +30,8 @@ on:
       - "*.md"
       - ".github/**"
       - "!.github/workflows/checks.yml"
+      - "!.github/workflows/release.yml"
+      - "!.github/workflows/release-readiness.yml"
   # Allow this workflow to be called from other workflows
   workflow_call:
     inputs:
@@ -114,6 +118,18 @@ jobs:
           HF_TOKEN:  ${{ secrets.HF_TOKEN }}
       - name: Acceptance Test
         run: make acceptance-test
+        env:
+          PYTHONPATH: .
+          PYTEST_ADDOPTS: -p scripts.release_evidence
+          TL_RELEASE_SUITE: acceptance-${{ matrix.python-version }}
+          TL_RELEASE_EVIDENCE: release-evidence/acceptance-${{ matrix.python-version }}.json
+      - name: Upload acceptance execution evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-evidence-acceptance-${{ matrix.python-version }}-${{ github.run_attempt }}
+          path: release-evidence/*.json
+          if-no-files-found: warn
       - name: Build check
         run: uv build
 
@@ -406,12 +422,48 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
       - name: Check Notebook Output Consistency
         if: ${{ !matrix.requires_hf_token || env.HAS_HF_TOKEN == 'true' }}
-        run: pytest --nbval-sanitize-with demos/doc_sanitize.cfg demos/${{ matrix.notebook }}.ipynb
+        run: uv run python -m pytest -p scripts.release_evidence --nbval-sanitize-with demos/doc_sanitize.cfg demos/${{ matrix.notebook }}.ipynb
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          TL_RELEASE_SUITE: notebook-${{ matrix.notebook }}
+          TL_RELEASE_EVIDENCE: release-evidence/notebook-${{ matrix.notebook }}.json
       - name: Skip (HF_TOKEN not available)
         if: ${{ matrix.requires_hf_token && env.HAS_HF_TOKEN != 'true' }}
         run: echo "Skipping ${{ matrix.notebook }} — requires HF_TOKEN for gated model access"
+      - name: Upload notebook execution evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-evidence-notebook-${{ matrix.notebook }}-${{ github.run_attempt }}
+          path: release-evidence/*.json
+          if-no-files-found: warn
+
+  readiness-tests:
+    name: Release gate and normalization regression tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - name: Install dependencies
+        run: uv sync --frozen
+      - name: Test release decisions and evidence recorder
+        run: uv run python -m unittest discover -s tests/unit/release_readiness
+      - name: Test normalization sentinels
+        run: uv run python -m pytest -p scripts.release_evidence tests/unit/components/test_release_norm_regression.py
+        env:
+          TL_RELEASE_SUITE: norm-regression
+          TL_RELEASE_EVIDENCE: release-evidence/norm-regression.json
+      - name: Upload normalization execution evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-evidence-norm-regression-${{ github.run_attempt }}
+          path: release-evidence/*.json
+          if-no-files-found: warn
 
 
   build-docs:

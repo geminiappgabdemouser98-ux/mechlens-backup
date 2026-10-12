@@ -1,0 +1,365 @@
+{
+  "schema_version": 1,
+  "suite": "norm-regression",
+  "commit": "33387b7def1ead3a8cba532a729da5599e875873",
+  "run_id": "local",
+  "run_attempt": "local",
+  "started_at": "2026-10-12T15:18:46.018781+00:00",
+  "python": "3.12.14",
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+  "dependencies": {
+    "pytest": "8.4.1",
+    "torch": "2.10.0",
+    "transformers": "5.8.1",
+    "huggingface-hub": "1.15.0",
+    "nbval": "0.10.0"
+  },
+  "command": [
+    "-p",
+    "scripts.release_evidence",
+    "tests/unit/components/test_release_norm_regression.py",
+    "-q"
+  ],
+  "deselected": [],
+  "collection_problems": [],
+  "exit_code": 0,
+  "finished_at": "2026-10-12T15:22:07.284212+00:00",
+  "cases": [
+    {
+      "nodeid": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[1.0-4-hooked]",
+      "phases": [
+        {
+          "when": "setup",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 0.005148251999344211,
+          "detail": ""
+        },
+        {
+          "when": "call",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 0.058324399000412086,
+          "detail": ""
+        },
+        {
+          "when": "teardown",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 5.3303383349993965,
+          "detail": ""
+        }
+      ],
+      "properties": [
+        [
+          "scope",
+          "synthetic RMSNorm component; CPU float32"
+        ],
+        [
+          "max_absolute_activation_delta",
+          0.0
+        ],
+        [
+          "absolute_tolerance",
+          1e-06
+        ]
+      ]
+    },
+    {
+      "nodeid": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[1.0-4-bridge]",
+      "phases": [
+        {
+          "when": "setup",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 0.0013515749997168314,
+          "detail": ""
+        },
+        {
+          "when": "call",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 0.008726773998205317,
+          "detail": ""
+        },
+        {
+          "when": "teardown",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 7.086926887001027,
+          "detail": ""
+        }
+      ],
+      "properties": [
+        [
+          "scope",
+          "synthetic RMSNorm component; CPU float32"
+        ],
+        [
+          "max_absolute_activation_delta",
+          0.0
+        ],
+        [
+          "absolute_tolerance",
+          1e-06
+        ]
+      ]
+    },
+    {
+      "nodeid": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[1.0-128-hooked]",
+      "phases": [
+        {
+          "when": "setup",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 0.00871832600023481,
+          "detail": ""
+        },
+        {
+          "when": "call",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 0.025252951003494672,
+          "detail": ""
+        },
+        {
+          "when": "teardown",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 6.245275551002123,
+          "detail": ""
+        }
+      ],
+      "properties": [
+        [
+          "scope",
+          "synthetic RMSNorm component; CPU float32"
+        ],
+        [
+          "max_absolute_activation_delta",
+          0.0
+        ],
+        [
+          "absolute_tolerance",
+          1e-06
+        ]
+      ]
+    },
+    {
+      "nodeid": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[1.0-128-bridge]",
+      "phases": [
+        {
+          "when": "setup",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 0.0027380189967516344,
+          "detail": ""
+        },
+        {
+          "when": "call",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 0.027627077000943245,
+          "detail": ""
+        },
+        {
+          "when": "teardown",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 5.939806432998012,
+          "detail": ""
+        }
+      ],
+      "properties": [
+        [
+          "scope",
+          "synthetic RMSNorm component; CPU float32"
+        ],
+        [
+          "max_absolute_activation_delta",
+          0.0
+        ],
+        [
+          "absolute_tolerance",
+          1e-06
+        ]
+      ]
+    },
+    {
+      "nodeid": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[0.0001-4-hooked]",
+      "phases": [
+        {
+          "when": "setup",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 0.00201162099983776,
+          "detail": ""
+        },
+        {
+          "when": "call",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 0.012987240999791538,
+          "detail": ""
+        },
+        {
+          "when": "teardown",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 3.742880116999004,
+          "detail": ""
+        }
+      ],
+      "properties": [
+        [
+          "scope",
+          "synthetic RMSNorm component; CPU float32"
+        ],
+        [
+          "max_absolute_activation_delta",
+          3.725290298461914e-09
+        ],
+        [
+          "absolute_tolerance",
+          1e-06
+        ],
+        [
+          "epsilon_outside_sqrt_negative_control_delta",
+          1.5218294858932495
+        ]
+      ]
+    },
+    {
+      "nodeid": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[0.0001-4-bridge]",
+      "phases": [
+        {
+          "when": "setup",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 0.0008160180004779249,
+          "detail": ""
+        },
+        {
+          "when": "call",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 0.006372095998813165,
+          "detail": ""
+        },
+        {
+          "when": "teardown",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 2.051899128000514,
+          "detail": ""
+        }
+      ],
+      "properties": [
+        [
+          "scope",
+          "synthetic RMSNorm component; CPU float32"
+        ],
+        [
+          "max_absolute_activation_delta",
+          3.725290298461914e-09
+        ],
+        [
+          "absolute_tolerance",
+          1e-06
+        ],
+        [
+          "epsilon_outside_sqrt_negative_control_delta",
+          1.5218294858932495
+        ]
+      ]
+    },
+    {
+      "nodeid": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[0.0001-128-hooked]",
+      "phases": [
+        {
+          "when": "setup",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 0.0009621800018067006,
+          "detail": ""
+        },
+        {
+          "when": "call",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 0.024703803999727825,
+          "detail": ""
+        },
+        {
+          "when": "teardown",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 4.907751365000877,
+          "detail": ""
+        }
+      ],
+      "properties": [
+        [
+          "scope",
+          "synthetic RMSNorm component; CPU float32"
+        ],
+        [
+          "max_absolute_activation_delta",
+          3.725290298461914e-09
+        ],
+        [
+          "absolute_tolerance",
+          1e-06
+        ],
+        [
+          "epsilon_outside_sqrt_negative_control_delta",
+          1.5218294858932495
+        ]
+      ]
+    },
+    {
+      "nodeid": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[0.0001-128-bridge]",
+      "phases": [
+        {
+          "when": "setup",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 0.0009633900008338969,
+          "detail": ""
+        },
+        {
+          "when": "call",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 0.014987013000791194,
+          "detail": ""
+        },
+        {
+          "when": "teardown",
+          "outcome": "passed",
+          "xfail": null,
+          "duration": 4.917170433000138,
+          "detail": ""
+        }
+      ],
+      "properties": [
+        [
+          "scope",
+          "synthetic RMSNorm component; CPU float32"
+        ],
+        [
+          "max_absolute_activation_delta",
+          3.725290298461914e-09
+        ],
+        [
+          "absolute_tolerance",
+          1e-06
+        ],
+        [
+          "epsilon_outside_sqrt_negative_control_delta",
+          1.5218294858932495
+        ]
+      ]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "required_suites": [
+    "acceptance-3.10",
+    "acceptance-3.11",
+    "acceptance-3.12",
+    "norm-regression",
+    "notebook-Attribution_Patching_Demo",
+    "notebook-Activation_Patching_in_TL_Demo",
+    "notebook-ARENA_Content",
+    "notebook-BERT",
+    "notebook-Bridge_Evals_Demo",
+    "notebook-Exploratory_Analysis_Demo",
+    "notebook-Head_Detector_Demo",
+    "notebook-Main_Demo",
+    "notebook-Othello_GPT",
+    "notebook-Patchscopes_Generation_Demo",
+    "notebook-Santa_Coder",
+    "notebook-T5",
+    "notebook-LLaMA",
+    "notebook-LLaMA_GPU_Quantized"
+  ]
+}

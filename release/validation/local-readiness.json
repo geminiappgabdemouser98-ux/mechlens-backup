@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "commit": "33387b7def1ead3a8cba532a729da5599e875873",
+  "run_id": "local",
+  "run_attempt": "local",
+  "ready": false,
+  "blockers": [
+    "norm-regression: working tree was dirty or its state was not recorded",
+    "acceptance-3.10: missing evidence",
+    "acceptance-3.11: missing evidence",
+    "acceptance-3.12: missing evidence",
+    "notebook-Attribution_Patching_Demo: missing evidence",
+    "notebook-Activation_Patching_in_TL_Demo: missing evidence",
+    "notebook-ARENA_Content: missing evidence",
+    "notebook-BERT: missing evidence",
+    "notebook-Bridge_Evals_Demo: missing evidence",
+    "notebook-Exploratory_Analysis_Demo: missing evidence",
+    "notebook-Head_Detector_Demo: missing evidence",
+    "notebook-Main_Demo: missing evidence",
+    "notebook-Othello_GPT: missing evidence",
+    "notebook-Patchscopes_Generation_Demo: missing evidence",
+    "notebook-Santa_Coder: missing evidence",
+    "notebook-T5: missing evidence",
+    "notebook-LLaMA: missing evidence",
+    "notebook-LLaMA_GPU_Quantized: missing evidence"
+  ],
+  "suites": [
+    {
+      "suite": "norm-regression",
+      "file": "norm.json",
+      "sha256": "6f1cc0229f2ef656426fa62f67cdb0acc3d195bdfcb3a0734fec9bf1d8d09aeb",
+      "ready": false,
+      "case_count": 8,
+      "blockers": [
+        "working tree was dirty or its state was not recorded"
+      ]
+    }
+  ]
+}

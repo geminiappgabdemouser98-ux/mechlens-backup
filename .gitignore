@@ -29,3 +29,6 @@ docs/source/generated
 !.claude/commands/
 .adapter-progress.json
 transformer_lens/tools/model_registry/data/verification_checkpoint.json
+# Generated release execution evidence and decisions
+/release-evidence/
+/release-report/

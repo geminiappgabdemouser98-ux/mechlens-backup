@@ -1,0 +1,61 @@
+name: Release Readiness
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    secrets:
+      HF_TOKEN:
+        required: false
+
+# No publishing steps: safe to run on a candidate branch before creating a release.
+jobs:
+  checks:
+    name: Run checks workflow
+    uses: ./.github/workflows/checks.yml
+    secrets:
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+
+  readiness:
+    name: Verify release execution evidence
+    needs: checks
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.12"
+      - name: Download this attempt's execution evidence
+        uses: actions/download-artifact@v8
+        with:
+          pattern: release-evidence-*-${{ github.run_attempt }}
+          path: release-evidence
+      - name: Require complete evidence for the release commit
+        if: always()
+        env:
+          CANDIDATE_SHA: ${{ github.sha }}
+          CHECKS_RESULT: ${{ needs.checks.result }}
+        run: >
+          uv run --no-project python scripts/release_readiness.py
+          --policy release/readiness-policy.json
+          --evidence-dir release-evidence
+          --commit "$CANDIDATE_SHA"
+          --run-id "$GITHUB_RUN_ID"
+          --run-attempt "$GITHUB_RUN_ATTEMPT"
+          --checks-result "$CHECKS_RESULT"
+          --output-dir release-report
+      - name: Attach maintainer summary
+        if: always()
+        run: cat release-report/readiness.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Preserve readiness decision
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-readiness-${{ github.run_attempt }}
+          path: release-report/
+          if-no-files-found: error
