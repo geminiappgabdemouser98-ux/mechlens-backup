@@ -1,5 +1,19 @@
 # Dashboard validation
 
+## Historical Gemma-3 comparison
+
+The dashboard now displays the triage note's reported longer-prompt regression
+delta (approximately `1.3e-4`) and post-fix delta (`2.9e-5`) side by side against
+`1e-4`. The source is linked from the comparison and identified separately from
+the original audit inventory. The full Drive document is not copied into the repo.
+The source gives no numerical value for the original short-prompt pass, so none
+is inferred. The existing audit and its release decision are unchanged.
+
+Numeric/DOM checks verified both displayed values, the inclusive threshold,
+ratios (`1.30x` and `0.29x`), common-scale bar lengths, approximation label and
+source link. Existing dashboard interaction and audit-byte checks also passed.
+Visual browser rendering remains unverified for the reason below.
+
 `release_readiness_dashboard.html` is a standalone offline snapshot of
 `release_readiness_audit.json`, whose assessed commit is
 `35a9fe6e8e558af7ad31e499d5a1f0e2fe7af349`. It does not reassess a release or query
