@@ -1,0 +1,35 @@
+test_cli_checks_threshold_and_writes_both_reports (test_gate.GateTests.test_cli_checks_threshold_and_writes_both_reports) ... ok
+test_cli_writes_blocked_report_and_exits_nonzero (test_gate.GateTests.test_cli_writes_blocked_report_and_exits_nonzero) ... ok
+test_collection_problem_deselection_and_nonzero_exit_block (test_gate.GateTests.test_collection_problem_deselection_and_nonzero_exit_block) ... ok
+test_complete_current_evidence_passes (test_gate.GateTests.test_complete_current_evidence_passes) ... ok
+test_dirty_or_unrecorded_worktree_blocks (test_gate.GateTests.test_dirty_or_unrecorded_worktree_blocks) ... ok
+test_duplicate_suite_and_duplicate_cases_block (test_gate.GateTests.test_duplicate_suite_and_duplicate_cases_block) ... ok
+test_empty_or_duplicate_policy_blocks (test_gate.GateTests.test_empty_or_duplicate_policy_blocks) ... ok
+test_failed_cancelled_or_skipped_checks_block (test_gate.GateTests.test_failed_cancelled_or_skipped_checks_block) ... ok
+test_invalid_json_nonfinite_and_unknown_suite_block (test_gate.GateTests.test_invalid_json_nonfinite_and_unknown_suite_block) ... ok
+test_invalid_or_missing_threshold_policy_blocks (test_gate.GateTests.test_invalid_or_missing_threshold_policy_blocks) ... ok
+test_missing_duplicate_invalid_and_nonfinite_metrics_block (test_gate.GateTests.test_missing_duplicate_invalid_and_nonfinite_metrics_block) ... ok
+test_missing_empty_and_malformed_evidence_block (test_gate.GateTests.test_missing_empty_and_malformed_evidence_block) ... ok
+test_numerical_threshold_boundary_and_green_test_failure (test_gate.GateTests.test_numerical_threshold_boundary_and_green_test_failure) ... ok
+test_one_bad_case_cannot_be_averaged_away (test_gate.GateTests.test_one_bad_case_cannot_be_averaged_away) ... ok
+test_setup_teardown_and_missing_call_block (test_gate.GateTests.test_setup_teardown_and_missing_call_block) ... ok
+test_skips_xfails_xpasses_failures_and_retries_block (test_gate.GateTests.test_skips_xfails_xpasses_failures_and_retries_block) ... ok
+test_wrong_commit_run_or_attempt_blocks (test_gate.GateTests.test_wrong_commit_run_or_attempt_blocks) ... ok
+test_archived_normalization_evidence_uses_recorded_properties (test_gate.RecorderTests.test_archived_normalization_evidence_uses_recorded_properties) ... ok
+test_real_pytest_records_failures_skips_xfails_and_deselection (test_gate.RecorderTests.test_real_pytest_records_failures_skips_xfails_and_deselection) ... ok
+test_cli_blocks_conflict_then_accepts_consistent_evidence (test_gate.SummaryConflictTests.test_cli_blocks_conflict_then_accepts_consistent_evidence) ... ok
+test_consistent_passing_sources_allow_summary (test_gate.SummaryConflictTests.test_consistent_passing_sources_allow_summary) ... ok
+test_duplicate_execution_still_reports_its_numerical_regression (test_gate.SummaryConflictTests.test_duplicate_execution_still_reports_its_numerical_regression) ... ok
+test_false_regression_flag_cannot_clear_failing_number (test_gate.SummaryConflictTests.test_false_regression_flag_cannot_clear_failing_number) ... ok
+test_missing_or_omitted_source_blocks (test_gate.SummaryConflictTests.test_missing_or_omitted_source_blocks) ... ok
+test_regression_flag_blocks_even_with_passing_number (test_gate.SummaryConflictTests.test_regression_flag_blocks_even_with_passing_number) ... ok
+test_stale_malformed_or_negative_summary_blocks (test_gate.SummaryConflictTests.test_stale_malformed_or_negative_summary_blocks) ... ok
+test_summary_and_supplement_cannot_replace_execution (test_gate.SummaryConflictTests.test_summary_and_supplement_cannot_replace_execution) ... ok
+test_v2_16_0_pattern_exposes_both_sources_and_failing_case (test_gate.SummaryConflictTests.test_v2_16_0_pattern_exposes_both_sources_and_failing_case) ... ok
+test_inventory_matches_workflow_matrix (test_gate.WorkflowTests.test_inventory_matches_workflow_matrix) ... ok
+test_publisher_requires_readiness_and_gate_cannot_ignore_failure (test_gate.WorkflowTests.test_publisher_requires_readiness_and_gate_cannot_ignore_failure) ... ok
+
+----------------------------------------------------------------------
+Ran 30 tests in 9.764s
+
+OK

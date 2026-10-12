@@ -1,0 +1,469 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-10-12T16:08:37.837842+00:00",
+  "repository": "geminiappgabdemouser98-ux/mechlens-backup",
+  "branch": "release-readiness-gate",
+  "assessed_commit": "35a9fe6e8e558af7ad31e499d5a1f0e2fe7af349",
+  "release_version": null,
+  "release_version_status": "No next release tag/version verified for this backup snapshot.",
+  "scope": "Review of locally available evidence; not a completed release-candidate acceptance run. This audit covers assessed_commit, not the later commit that stores the audit.",
+  "release_decision": {
+    "status": "BLOCKED",
+    "ready": false,
+    "classification": "insufficient_current_candidate_evidence",
+    "cli_exit_code": 1,
+    "publish_authorized": false
+  },
+  "gate_results": [
+    {
+      "gate": "implementation_tests",
+      "status": "PASS",
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/unit/release_readiness",
+        "-v"
+      ],
+      "started_at_utc": "2026-10-12T16:08:26.391085+00:00",
+      "test_count": 30,
+      "duration_seconds": 9.764,
+      "exit_code": 0,
+      "source": "release/validation/audit-gate-tests.log",
+      "scope": "gate logic, recorder, workflow wiring and synthetic summary-conflict tests; not model acceptance"
+    },
+    {
+      "gate": "required_release_suites",
+      "status": "BLOCKED",
+      "required": 18,
+      "qualifying": 0,
+      "missing": 17,
+      "present_but_invalid": 1
+    },
+    {
+      "gate": "numerical_measurements",
+      "status": "PASS_OBSERVED_NOT_QUALIFYING",
+      "source": "release/validation/norm.json",
+      "reason": "Archived component measurements pass their limits, but refer to a different commit and lack a recorded working-tree state; no candidate model-logit parity evidence supplied."
+    },
+    {
+      "gate": "provenance",
+      "status": "BLOCKED",
+      "observed_commit": "33387b7def1ead3a8cba532a729da5599e875873",
+      "expected_commit": "35a9fe6e8e558af7ad31e499d5a1f0e2fe7af349",
+      "dirty_worktree": null,
+      "source": "release/validation/norm.json",
+      "working_tree_state": "unrecorded"
+    },
+    {
+      "gate": "summary_consistency",
+      "status": "NOT_EVALUATED_FOR_CANDIDATE",
+      "reason": "No candidate release-summary or supplemental regression JSON supplied. Synthetic contradiction handling passed in implementation tests."
+    },
+    {
+      "gate": "full_checks_workflow",
+      "status": "UNKNOWN_BLOCKING",
+      "checks_result_supplied": "unknown",
+      "reason": "No completed current-candidate full-checks result verified; local implementation tests do not establish CI success."
+    }
+  ],
+  "blockers": [
+    "checks workflow result: unknown",
+    "norm.json (norm-regression): commit does not match this candidate/run",
+    "norm.json (norm-regression): working tree was dirty or its state was not recorded",
+    "acceptance-3.10: missing evidence",
+    "acceptance-3.11: missing evidence",
+    "acceptance-3.12: missing evidence",
+    "notebook-Attribution_Patching_Demo: missing evidence",
+    "notebook-Activation_Patching_in_TL_Demo: missing evidence",
+    "notebook-ARENA_Content: missing evidence",
+    "notebook-BERT: missing evidence",
+    "notebook-Bridge_Evals_Demo: missing evidence",
+    "notebook-Exploratory_Analysis_Demo: missing evidence",
+    "notebook-Head_Detector_Demo: missing evidence",
+    "notebook-Main_Demo: missing evidence",
+    "notebook-Othello_GPT: missing evidence",
+    "notebook-Patchscopes_Generation_Demo: missing evidence",
+    "notebook-Santa_Coder: missing evidence",
+    "notebook-T5: missing evidence",
+    "notebook-LLaMA: missing evidence",
+    "notebook-LLaMA_GPU_Quantized: missing evidence"
+  ],
+  "measurements": [
+    {
+      "source": "release/validation/norm.json",
+      "case_id": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[1.0-4-hooked]",
+      "metric": "max_absolute_activation_delta",
+      "value": 0.0,
+      "operator": "<=",
+      "threshold": 1e-06,
+      "observed_pass": true,
+      "qualifies_as_current_release_evidence": false,
+      "scope": "synthetic RMSNorm CPU float32 component"
+    },
+    {
+      "source": "release/validation/norm.json",
+      "case_id": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[1.0-4-bridge]",
+      "metric": "max_absolute_activation_delta",
+      "value": 0.0,
+      "operator": "<=",
+      "threshold": 1e-06,
+      "observed_pass": true,
+      "qualifies_as_current_release_evidence": false,
+      "scope": "synthetic RMSNorm CPU float32 component"
+    },
+    {
+      "source": "release/validation/norm.json",
+      "case_id": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[1.0-128-hooked]",
+      "metric": "max_absolute_activation_delta",
+      "value": 0.0,
+      "operator": "<=",
+      "threshold": 1e-06,
+      "observed_pass": true,
+      "qualifies_as_current_release_evidence": false,
+      "scope": "synthetic RMSNorm CPU float32 component"
+    },
+    {
+      "source": "release/validation/norm.json",
+      "case_id": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[1.0-128-bridge]",
+      "metric": "max_absolute_activation_delta",
+      "value": 0.0,
+      "operator": "<=",
+      "threshold": 1e-06,
+      "observed_pass": true,
+      "qualifies_as_current_release_evidence": false,
+      "scope": "synthetic RMSNorm CPU float32 component"
+    },
+    {
+      "source": "release/validation/norm.json",
+      "case_id": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[0.0001-4-hooked]",
+      "metric": "max_absolute_activation_delta",
+      "value": 3.725290298461914e-09,
+      "operator": "<=",
+      "threshold": 1e-06,
+      "observed_pass": true,
+      "qualifies_as_current_release_evidence": false,
+      "scope": "synthetic RMSNorm CPU float32 component"
+    },
+    {
+      "source": "release/validation/norm.json",
+      "case_id": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[0.0001-4-hooked]",
+      "metric": "epsilon_outside_sqrt_negative_control_delta",
+      "value": 1.5218294858932495,
+      "operator": ">",
+      "threshold": 0.0001,
+      "observed_pass": true,
+      "qualifies_as_current_release_evidence": false,
+      "scope": "deliberately wrong formula negative control"
+    },
+    {
+      "source": "release/validation/norm.json",
+      "case_id": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[0.0001-4-bridge]",
+      "metric": "max_absolute_activation_delta",
+      "value": 3.725290298461914e-09,
+      "operator": "<=",
+      "threshold": 1e-06,
+      "observed_pass": true,
+      "qualifies_as_current_release_evidence": false,
+      "scope": "synthetic RMSNorm CPU float32 component"
+    },
+    {
+      "source": "release/validation/norm.json",
+      "case_id": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[0.0001-4-bridge]",
+      "metric": "epsilon_outside_sqrt_negative_control_delta",
+      "value": 1.5218294858932495,
+      "operator": ">",
+      "threshold": 0.0001,
+      "observed_pass": true,
+      "qualifies_as_current_release_evidence": false,
+      "scope": "deliberately wrong formula negative control"
+    },
+    {
+      "source": "release/validation/norm.json",
+      "case_id": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[0.0001-128-hooked]",
+      "metric": "max_absolute_activation_delta",
+      "value": 3.725290298461914e-09,
+      "operator": "<=",
+      "threshold": 1e-06,
+      "observed_pass": true,
+      "qualifies_as_current_release_evidence": false,
+      "scope": "synthetic RMSNorm CPU float32 component"
+    },
+    {
+      "source": "release/validation/norm.json",
+      "case_id": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[0.0001-128-hooked]",
+      "metric": "epsilon_outside_sqrt_negative_control_delta",
+      "value": 1.5218294858932495,
+      "operator": ">",
+      "threshold": 0.0001,
+      "observed_pass": true,
+      "qualifies_as_current_release_evidence": false,
+      "scope": "deliberately wrong formula negative control"
+    },
+    {
+      "source": "release/validation/norm.json",
+      "case_id": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[0.0001-128-bridge]",
+      "metric": "max_absolute_activation_delta",
+      "value": 3.725290298461914e-09,
+      "operator": "<=",
+      "threshold": 1e-06,
+      "observed_pass": true,
+      "qualifies_as_current_release_evidence": false,
+      "scope": "synthetic RMSNorm CPU float32 component"
+    },
+    {
+      "source": "release/validation/norm.json",
+      "case_id": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[0.0001-128-bridge]",
+      "metric": "epsilon_outside_sqrt_negative_control_delta",
+      "value": 1.5218294858932495,
+      "operator": ">",
+      "threshold": 0.0001,
+      "observed_pass": true,
+      "qualifies_as_current_release_evidence": false,
+      "scope": "deliberately wrong formula negative control"
+    }
+  ],
+  "source_provenance": {
+    "inputs_to_release_decision": [
+      "release/validation/norm.json"
+    ],
+    "policy": "release/readiness-policy.json",
+    "evidence_selection": "Only archived raw execution evidence is passed to the CLI. Prior decision reports and synthetic fixtures are not release evidence.",
+    "evaluation_identity": {
+      "commit": "35a9fe6e8e558af7ad31e499d5a1f0e2fe7af349",
+      "run_id": "local",
+      "run_attempt": "local",
+      "checks_result": "unknown",
+      "identity_note": "Local audit identity only; no GitHub Actions run is claimed."
+    },
+    "source_files": [
+      {
+        "path": "release/readiness-policy.json",
+        "sha256": "00ad4e13d9078152711180c29cb37e373ebe7d8abdaa1d351629c4093e6a4604",
+        "git_commit": "35a9fe6e8e558af7ad31e499d5a1f0e2fe7af349",
+        "role": "policy_code_or_review_record"
+      },
+      {
+        "path": "scripts/release_readiness.py",
+        "sha256": "da8d68db1c2d1fe0dad857608743e8ae7d419c86985bc9afc8c32f91d7695576",
+        "git_commit": "35a9fe6e8e558af7ad31e499d5a1f0e2fe7af349",
+        "role": "policy_code_or_review_record"
+      },
+      {
+        "path": "scripts/release_evidence.py",
+        "sha256": "34d56274619c2d01cbc50a9e78d15aa0445ea7bb5823826c7630e09b8ffbc7c4",
+        "git_commit": "35a9fe6e8e558af7ad31e499d5a1f0e2fe7af349",
+        "role": "policy_code_or_review_record"
+      },
+      {
+        "path": "tests/unit/release_readiness/test_gate.py",
+        "sha256": "25c7f98c02e378bd72b119370d4eadbc83bc0fc4e32fd5374a473bd6281692ea",
+        "git_commit": "35a9fe6e8e558af7ad31e499d5a1f0e2fe7af349",
+        "role": "policy_code_or_review_record"
+      },
+      {
+        "path": "release/validation/norm.json",
+        "sha256": "6f1cc0229f2ef656426fa62f67cdb0acc3d195bdfcb3a0734fec9bf1d8d09aeb",
+        "git_commit": "35a9fe6e8e558af7ad31e499d5a1f0e2fe7af349",
+        "role": "archived_component_evidence"
+      },
+      {
+        "path": "release/VALIDATION.md",
+        "sha256": "1c3e076e212186f473f71c4d047c5c5ef5492f3feb8d6833ad905c76b4758852",
+        "git_commit": "35a9fe6e8e558af7ad31e499d5a1f0e2fe7af349",
+        "role": "policy_code_or_review_record"
+      },
+      {
+        "path": ".github/workflows/release-readiness.yml",
+        "sha256": "39b7fd2036ff10d4da39bed7f660e22b68ba8cf859ecaa2d52b25e4a80758382",
+        "git_commit": "35a9fe6e8e558af7ad31e499d5a1f0e2fe7af349",
+        "role": "policy_code_or_review_record"
+      },
+      {
+        "path": ".github/workflows/release.yml",
+        "sha256": "298f86a3a4edbbd95d19178bfdb355d229a79ccaea2213662d4874c2a18bda93",
+        "git_commit": "35a9fe6e8e558af7ad31e499d5a1f0e2fe7af349",
+        "role": "policy_code_or_review_record"
+      },
+      {
+        "path": "release/validation/audit-gate-tests.log",
+        "sha256": "ac5f02561e77cc48daac18f518fb6501f7397bd3cc34ec0ab2c1adb99d9f5c02",
+        "git_commit": null,
+        "role": "fresh_test_output"
+      },
+      {
+        "path": "tests/unit/release_readiness/fixtures/v2_16_0_pattern/README.md",
+        "sha256": "046f53b329181cd881e656109cfd0eebbae576ea2271bf5f631e13cfbea014e4",
+        "git_commit": "35a9fe6e8e558af7ad31e499d5a1f0e2fe7af349",
+        "role": "synthetic_fixture"
+      },
+      {
+        "path": "tests/unit/release_readiness/fixtures/v2_16_0_pattern/long-prompt.json",
+        "sha256": "fef87207279cecbe30ddad7aafe1fd46dd839d5c8703acae6bc565698153f00e",
+        "git_commit": "35a9fe6e8e558af7ad31e499d5a1f0e2fe7af349",
+        "role": "synthetic_fixture"
+      },
+      {
+        "path": "tests/unit/release_readiness/fixtures/v2_16_0_pattern/short-prompt.json",
+        "sha256": "a11c26bb652431b4cfaee4ecc8ce847203e5a8a80438b087ab3180caaacc8c32",
+        "git_commit": "35a9fe6e8e558af7ad31e499d5a1f0e2fe7af349",
+        "role": "synthetic_fixture"
+      },
+      {
+        "path": "tests/unit/release_readiness/fixtures/v2_16_0_pattern/summary.json",
+        "sha256": "300d6dc9d29143e2bfe3d7b17587cdc65f74ec128503bbf87e2a7667111169fd",
+        "git_commit": "35a9fe6e8e558af7ad31e499d5a1f0e2fe7af349",
+        "role": "synthetic_fixture"
+      },
+      {
+        "path": "tests/unit/components/test_release_norm_regression.py",
+        "sha256": "e50e15416342a5e71d615b950b9500caab6ec4c76f8dce247b4252e5d2e6d986",
+        "git_commit": "35a9fe6e8e558af7ad31e499d5a1f0e2fe7af349",
+        "role": "component_measurement_and_negative_control_definition"
+      }
+    ],
+    "archived_execution_metadata": {
+      "commit": "33387b7def1ead3a8cba532a729da5599e875873",
+      "run_id": "local",
+      "run_attempt": "local",
+      "dirty_worktree": null,
+      "started_at": "2026-10-12T15:18:46.018781+00:00",
+      "finished_at": "2026-10-12T15:22:07.284212+00:00",
+      "python": "3.12.14",
+      "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+      "dependencies": {
+        "pytest": "8.4.1",
+        "torch": "2.10.0",
+        "transformers": "5.8.1",
+        "huggingface-hub": "1.15.0",
+        "nbval": "0.10.0"
+      },
+      "command": [
+        "-p",
+        "scripts.release_evidence",
+        "tests/unit/components/test_release_norm_regression.py",
+        "-q"
+      ],
+      "exit_code": 0,
+      "source": "release/validation/norm.json"
+    },
+    "input_aliases": {
+      "norm.json": "release/validation/norm.json"
+    },
+    "hash_note": "Hashes identify bytes reviewed; these are not signed attestations."
+  },
+  "raw_cli_decision": {
+    "schema_version": 1,
+    "commit": "35a9fe6e8e558af7ad31e499d5a1f0e2fe7af349",
+    "run_id": "local",
+    "run_attempt": "local",
+    "ready": false,
+    "blockers": [
+      "checks workflow result: unknown",
+      "norm.json (norm-regression): commit does not match this candidate/run",
+      "norm.json (norm-regression): working tree was dirty or its state was not recorded",
+      "acceptance-3.10: missing evidence",
+      "acceptance-3.11: missing evidence",
+      "acceptance-3.12: missing evidence",
+      "notebook-Attribution_Patching_Demo: missing evidence",
+      "notebook-Activation_Patching_in_TL_Demo: missing evidence",
+      "notebook-ARENA_Content: missing evidence",
+      "notebook-BERT: missing evidence",
+      "notebook-Bridge_Evals_Demo: missing evidence",
+      "notebook-Exploratory_Analysis_Demo: missing evidence",
+      "notebook-Head_Detector_Demo: missing evidence",
+      "notebook-Main_Demo: missing evidence",
+      "notebook-Othello_GPT: missing evidence",
+      "notebook-Patchscopes_Generation_Demo: missing evidence",
+      "notebook-Santa_Coder: missing evidence",
+      "notebook-T5: missing evidence",
+      "notebook-LLaMA: missing evidence",
+      "notebook-LLaMA_GPU_Quantized: missing evidence"
+    ],
+    "suites": [
+      {
+        "suite": "norm-regression",
+        "file": "norm.json",
+        "kind": "execution",
+        "sha256": "6f1cc0229f2ef656426fa62f67cdb0acc3d195bdfcb3a0734fec9bf1d8d09aeb",
+        "ready": false,
+        "case_count": 8,
+        "blockers": [
+          "commit does not match this candidate/run",
+          "working tree was dirty or its state was not recorded"
+        ],
+        "measurements": [
+          {
+            "nodeid": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[1.0-4-hooked]",
+            "metric": "max_absolute_activation_delta",
+            "value": 0.0,
+            "maximum": 1e-06,
+            "passed": true
+          },
+          {
+            "nodeid": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[1.0-4-bridge]",
+            "metric": "max_absolute_activation_delta",
+            "value": 0.0,
+            "maximum": 1e-06,
+            "passed": true
+          },
+          {
+            "nodeid": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[1.0-128-hooked]",
+            "metric": "max_absolute_activation_delta",
+            "value": 0.0,
+            "maximum": 1e-06,
+            "passed": true
+          },
+          {
+            "nodeid": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[1.0-128-bridge]",
+            "metric": "max_absolute_activation_delta",
+            "value": 0.0,
+            "maximum": 1e-06,
+            "passed": true
+          },
+          {
+            "nodeid": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[0.0001-4-hooked]",
+            "metric": "max_absolute_activation_delta",
+            "value": 3.725290298461914e-09,
+            "maximum": 1e-06,
+            "passed": true
+          },
+          {
+            "nodeid": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[0.0001-4-bridge]",
+            "metric": "max_absolute_activation_delta",
+            "value": 3.725290298461914e-09,
+            "maximum": 1e-06,
+            "passed": true
+          },
+          {
+            "nodeid": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[0.0001-128-hooked]",
+            "metric": "max_absolute_activation_delta",
+            "value": 3.725290298461914e-09,
+            "maximum": 1e-06,
+            "passed": true
+          },
+          {
+            "nodeid": "tests/unit/components/test_release_norm_regression.py::test_epsilon_inside_normalization[0.0001-128-bridge]",
+            "metric": "max_absolute_activation_delta",
+            "value": 3.725290298461914e-09,
+            "maximum": 1e-06,
+            "passed": true
+          }
+        ]
+      }
+    ],
+    "summaries": [],
+    "contradictions": []
+  },
+  "limitations": [
+    "No trained Gemma checkpoint acceptance replay, GPU/bfloat16 validation, gated notebook sweep or complete repository test run completed.",
+    "Full type checking and full test-pr validation remain incomplete as documented in release/VALIDATION.md.",
+    "Current issue dispositions and live release protections were not verified.",
+    "Private Drive source documents are not included. Synthetic 2.16.0-pattern values are not historical incident measurements.",
+    "Review-only branch push was authorized; it does not waive the release gate."
+  ]
+}
